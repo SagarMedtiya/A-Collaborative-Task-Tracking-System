@@ -11,9 +11,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class WebSecurityConfig {
 
     @Bean
-    public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
+    public PasswordEncoder passwordEncoder() {
+        // Creates a BCryptPasswordEncoder bean to hash passwords securely
+        return new BCryptPasswordEncoder();
+    }
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        // Retrieves the AuthenticationManager bean from the AuthenticationConfiguration
         return authenticationConfiguration.getAuthenticationManager();
     }
 }
