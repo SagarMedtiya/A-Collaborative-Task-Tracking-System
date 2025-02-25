@@ -12,7 +12,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic"); // prefix for subscribing to notifications
+        config.enableSimpleBroker("/topic"); //// Enables a simple in-memory message broker with "/topic" as the prefix for subscribing to messages.
         config.setApplicationDestinationPrefixes("/app"); //prefix for sending messages
 
     }
