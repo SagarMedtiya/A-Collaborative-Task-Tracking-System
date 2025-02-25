@@ -14,39 +14,39 @@ public class AIService {
     private String apiKey;
 
     public String generateTaskDescription(String prompt) {
-        OpenAiService service = new OpenAiService(apiKey);
-        int retryCount = 3; // Number of retries for rate-limiting errors
-        int retryDelay = 3000; // Delay between retries in milliseconds
+        OpenAiService service = new OpenAiService(apiKey); // Initialize OpenAI service with API key
+        int retryCount = 3; // Number of retries for handling rate-limit errors (HTTP 429)
+        int retryDelay = 3000; // Delay (in milliseconds) before retrying after a failure
 
         for (int i = 0; i < retryCount; i++) {
             try {
-                // Build the completion request
+                // Build the completion request with prompt, model, and token limit
                 CompletionRequest request = CompletionRequest.builder()
                         .prompt(prompt)
-                        .model("gpt-3.5-turbo") // Use the correct model
+                        .model("gpt-3.5-turbo") // Specify the GPT model
                         .maxTokens(100) // Limit the response length
                         .build();
 
-                // Send the request and return the generated text
+                // Send the request to OpenAI and return the generated text
                 return service.createCompletion(request)
                         .getChoices()
                         .get(0)
                         .getText()
-                        .trim(); // Trim whitespace from the response
+                        .trim(); // Remove unnecessary whitespace from the response
             } catch (HttpException e) {
-                // Handle rate-limiting errors (HTTP 429)
+                // Check if the error is due to rate limiting (HTTP 429)
                 if (e.code() == 429 && i < retryCount - 1) {
                     try {
                         Thread.sleep(retryDelay); // Wait before retrying
                     } catch (InterruptedException ignored) {
-                        // Ignore interruption
+                        // Ignore interruption errors
                     }
                 } else {
-                    // Re-throw the exception if it's not a rate-limiting error or retries are exhausted
+                    // If it's not a rate-limit error or retries are exhausted, throw an exception
                     throw new RuntimeException("Failed to generate task description: " + e.getMessage(), e);
                 }
             } catch (Exception e) {
-                // Handle other exceptions
+                // Handle any other errors
                 throw new RuntimeException("Failed to generate task description: " + e.getMessage(), e);
             }
         }
